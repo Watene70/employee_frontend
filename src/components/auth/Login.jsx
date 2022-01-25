@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class Login extends Component {
   state = {};
@@ -29,9 +30,9 @@ class Login extends Component {
             />
           </div>
           <div className="d-grid gap-2 mt-5">
-            <button type="submit" className="btn btn-primary">
+            <Link type="submit" className="btn btn-primary" to="/home">
               Login
-            </button>
+            </Link>
           </div>
         </div>
       </div>
