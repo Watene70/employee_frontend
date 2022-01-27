@@ -23,7 +23,7 @@ export const loginUser = (personnel, history) => (dispatch) => {
       localStorage.setItem("assessmentJwt", accessToken);
 
       // store user
-      localStorage.setItem("atlasuser", JSON.stringify(response.data.token));
+      localStorage.setItem("atlasuser", JSON.stringify(response.data.accessToken));
 
       // set token to auth header
       setAuthToken(accessToken);
