@@ -1,6 +1,9 @@
+
 import axios from "axios";
 
-axios.defaults.baseURL = `http://localhost:5000`;
+console.log(process.env.REACT_APP_BASE_URL);
+
+axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 
 axios.interceptors.request.use((request) => {
   console.log("Starting Request", request);

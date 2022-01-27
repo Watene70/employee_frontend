@@ -1,9 +1,59 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import Swal from "sweetalert2";
+import { Spinner } from "../common";
+import { loginUser } from "../../actions/authActions";
 
 class Login extends Component {
-  state = {};
+  state = {
+    name: "",
+    password: "",
+    preloader: false,
+  };
+
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/home");
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.auth.isAuthenticated !== this.props.auth.isAuthenticated) {
+      this.props.history.push("/home");
+      this.setState({
+        preloader: !this.state.preloader,
+      });
+    }
+    if (prevProps.login_error !== this.props.login_error) {
+      this.setState({
+        preloader: !this.state.preloader,
+      });
+    }
+  }
+
+  onLogin = () => {
+    const { name, password, preloader } = this.state;
+    if (name === "" || password === "") {
+      Swal.fire("Error", "All fields are required", "error");
+    } else {
+      this.setState({
+        preloader: !preloader,
+      });
+      let data = { name, password };
+      this.props.loginUser(data, this.props.history);
+    }
+  };
+
   render() {
+    const { name, password, preloader } = this.state;
+
     return (
       <div className="loginContainer d-flex align-items-center justify-content-center">
         <div className="col-md-4 shadow p-4">
@@ -15,8 +65,10 @@ class Login extends Component {
             <input
               type="text"
               className="form-control"
-              id="exampleInputEmail1"
               aria-describedby="emailHelp"
+              onChange={this.handleChange}
+              value={name}
+              name="name"
             />
           </div>
           <div className="mb-3">
@@ -26,13 +78,23 @@ class Login extends Component {
             <input
               type="password"
               className="form-control"
-              id="exampleInputPassword1"
+              onChange={this.handleChange}
+              value={password}
+              name="password"
             />
           </div>
           <div className="d-grid gap-2 mt-5">
-            <Link type="submit" className="btn btn-primary" to="/home">
-              Login
-            </Link>
+            {preloader ? (
+              <Spinner></Spinner>
+            ) : (
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={this.onLogin}
+              >
+                Login
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -40,4 +102,9 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  login_error: state.auth.login_error,
+});
+
+export default connect(mapStateToProps, { loginUser })(withRouter(Login));
